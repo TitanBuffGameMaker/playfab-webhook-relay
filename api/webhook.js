@@ -79,6 +79,15 @@ export default async function handler(req, res) {
       
       console.log('📡 Calling PlayFab...');
       
+      // ⭐ สร้าง session object ตาม Cloud Script
+      const sessionData = {
+        client_reference_id: transactionId,
+        payment_intent: stripePaymentId,
+        payment_status: paymentStatus
+      };
+      
+      console.log('📦 Session data:', JSON.stringify(sessionData));
+      
       const playfabUrl = `https://${process.env.PLAYFAB_TITLE_ID}.playfabapi.com/Server/ExecuteCloudScript`;
       
       const playfabResponse = await fetch(playfabUrl, {
@@ -91,19 +100,7 @@ export default async function handler(req, res) {
           PlayFabId: playerId,
           FunctionName: 'ProcessStripeWebhook',
           FunctionParameter: {
-            event: {
-              type: event.type,
-              data: {
-                object: {
-                  client_reference_id: transactionId,
-                  payment_intent: stripePaymentId,
-                  payment_status: paymentStatus
-                }
-              }
-            },
-            transactionId: transactionId,
-            stripePaymentId: stripePaymentId,
-            status: paymentStatus
+            session: sessionData // ⭐ ส่งแค่ session object
           }
         })
       });
@@ -148,4 +145,3 @@ export default async function handler(req, res) {
   
   return res.status(200).json({ received: true });
 }
-
