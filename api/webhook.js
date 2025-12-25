@@ -89,7 +89,7 @@ export default async function handler(req, res) {
         },
         body: JSON.stringify({
           PlayFabId: playerId,
-          FunctionName: 'StripeWebhookHandler',
+          FunctionName: 'ProcessStripeWebhook',
           FunctionParameter: {
             event: {
               type: event.type,
@@ -148,3 +148,4 @@ export default async function handler(req, res) {
   
   return res.status(200).json({ received: true });
 }
+
